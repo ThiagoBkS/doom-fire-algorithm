@@ -7,4 +7,5 @@ interface DoomFireController {
     changePaletteColor(hue: number): void
     changePixelIntensity(row: number, column: number, newIntensity: number): void
     changeWindDirection(direction: String): void
+    reset(): void
 }

@@ -4,6 +4,8 @@ import { $ } from "./functions.js";
 const doomfire = new DoomFire($("doom-fire") as HTMLCanvasElement);
 doomfire.start();
 
+$("reset-fire").addEventListener("click", () => doomfire.reset())
+
 document.querySelectorAll("[data-hue]").forEach((element) => {
 	if (!(element instanceof HTMLElement)) return;
 

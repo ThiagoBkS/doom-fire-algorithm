@@ -1,10 +1,12 @@
 import CanvasRender from "./CanvasRender.js";
 import { generateHSLPalette } from "./functions.js";
 import { Size } from "./types.js";
+import { WindDirection } from "./enuns/WindDirection.js";
 
 export default class DoomFire implements DoomFireController {
 	private canvasRender: CanvasRender;
 	private colorPalette: Array<string>;
+	private initialPalette: Array<string>;
 	private config: {
 		fps: number;
 		matrixSize: number;
@@ -57,6 +59,7 @@ export default class DoomFire implements DoomFireController {
 			"#efefc7",
 			"#ffffff",
 		];
+		this.initialPalette = [...this.colorPalette];
 		this.config = {
 			fps: 24,
 			matrixSize: 64,
@@ -69,6 +72,22 @@ export default class DoomFire implements DoomFireController {
 
 		this.dataStructure = this.createMatrixArray(this.config.matrixSize);
 		this.setFireSource(this.dataStructure.length - 1, this.config.maxPaletteIntensity);
+	}
+
+	public reset(): void {
+		this.colorPalette = [...this.initialPalette];
+		this.config.fps = 24;
+		this.config.matrixSize = 64;
+		this.config.decayIntensity = 3;
+		this.config.maxPaletteIntensity = this.colorPalette.length;
+		this.config.windDirection = WindDirection.NONE;
+
+		this.dataStructure = this.createMatrixArray(this.config.matrixSize);
+		this.setFireSource(this.dataStructure.length - 1, this.config.maxPaletteIntensity);
+
+		if (this.config.animationFrame) cancelAnimationFrame(this.config.animationFrame);
+		this.config.lastFrameTime = undefined;
+		this.start();
 	}
 
 	get cellSize(): Size {
