@@ -2,7 +2,7 @@ import CanvasRender from "./CanvasRender.js";
 import { generateHSLPalette } from "./functions.js";
 import { Size } from "./types.js";
 
-export default class DoomFire {
+export default class DoomFire implements DoomFireController {
 	private canvasRender: CanvasRender;
 	private colorPalette: Array<string>;
 	private config: {
@@ -12,7 +12,7 @@ export default class DoomFire {
 		maxPaletteIntensity: number;
 		animationFrame: undefined | number;
 		lastFrameTime: undefined | number;
-		windDirection: number;
+		windDirection: WindDirection;
 	};
 	private dataStructure: Array<Array<number>>;
 
@@ -64,7 +64,7 @@ export default class DoomFire {
 			maxPaletteIntensity: this.colorPalette.length,
 			animationFrame: undefined,
 			lastFrameTime: undefined,
-			windDirection: 0,
+			windDirection: WindDirection.NONE,
 		};
 
 		this.dataStructure = this.createMatrixArray(this.config.matrixSize);
@@ -106,16 +106,16 @@ export default class DoomFire {
 			this.dataStructure[row][column] = newIntensity;
 	}
 
-	public changeWindDirection(direction: string) {
+	public changeWindDirection(direction: String) {
 		switch (direction) {
 			case "LEFT":
-				this.config.windDirection = -1;
+				this.config.windDirection = WindDirection.LEFT;
 				break;
 			case "RIGHT":
-				this.config.windDirection = 1;
+				this.config.windDirection = WindDirection.RIGHT;
 				break;
 			default:
-				this.config.windDirection = 0;
+				this.config.windDirection = WindDirection.NONE;
 		}
 	}
 
@@ -170,10 +170,11 @@ export default class DoomFire {
 	}
 
 	private requestFrame(timestamp: number): void {
-		if (!this.config.lastFrameTime) this.config.lastFrameTime = timestamp;
-		const elapsedTime = timestamp - this.config.lastFrameTime;
+		if (!this.config.lastFrameTime)
+			this.config.lastFrameTime = timestamp;
 
-		if (elapsedTime > 1000 / this.config.fps) {
+		const elapsedTime = timestamp - this.config.lastFrameTime;
+		if (elapsedTime > (1000 / this.config.fps)) {
 			this.config.lastFrameTime = timestamp;
 			this.render();
 		}

@@ -1,6 +1,7 @@
 import DoomFire from "./DoomFire.js";
+import { $ } from "./functions.js";
 
-const doomfire = new DoomFire(document.getElementById("doom-fire") as HTMLCanvasElement);
+const doomfire = new DoomFire($("doom-fire") as HTMLCanvasElement);
 doomfire.start();
 
 document.querySelectorAll("[data-hue]").forEach((element) => {
@@ -12,40 +13,28 @@ document.querySelectorAll("[data-hue]").forEach((element) => {
 	element.addEventListener("click", () => doomfire.changePaletteColor(hue ? parseInt(hue) : 0));
 });
 
-document.getElementById("change-size")!.addEventListener("input", (event) => {
-	const element = event.target as HTMLInputElement;
-
-	doomfire.changeMatrixSize(parseInt(element.value) * 4);
+$("change-size").addEventListener("input", (event) => {
+	doomfire.changeMatrixSize(parseInt((event.target as HTMLInputElement).value) * 4);
 });
 
-document.getElementById("change-fps")!.addEventListener("input", (event) => {
-	const element = event.target as HTMLInputElement;
-
-	doomfire.changeFPS(parseInt(element.value));
+$("change-fps").addEventListener("input", (event) => {
+	doomfire.changeFPS(parseInt((event.target as HTMLInputElement).value));
 });
 
-document.getElementById("change-quality")!.addEventListener("input", (event) => {
-	const element = event.target as HTMLInputElement;
-	const quality = parseInt(element.value);
-
+$("change-quality").addEventListener("input", event => {
+	const quality = parseInt((event.target as HTMLInputElement).value);
 	doomfire.changeQuality(quality, quality);
 });
 
-document.getElementById("change-fire-intensity")!.addEventListener("input", (event) => {
+$("change-fire-intensity").addEventListener("input", event => {
+	if (!(event.target as HTMLInputElement)) return;
 	const element = event.target as HTMLInputElement;
-	const max = Number(element.getAttribute("max"));
-	const value = Number(element.value);
-	const invertValue = max - value;
 
+	const invertValue = Number(element.getAttribute("max")) -  Number(element.value);
 	doomfire.changeDecayIntensity(invertValue + 2);
 });
 
-document.querySelectorAll("[data-direction]").forEach((element) => {
+document.querySelectorAll("[data-direction]").forEach(element => {
 	if (!(element instanceof HTMLElement)) return;
-
-	const direction = element.dataset.direction;
-
-	element.addEventListener("click", () => {
-		doomfire.changeWindDirection(String(direction));
-	});
+	element.addEventListener("click", () => doomfire.changeWindDirection(String(element.dataset.direction)));
 });

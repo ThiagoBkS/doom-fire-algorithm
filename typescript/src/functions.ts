@@ -1,10 +1,14 @@
 export function generateHSLPalette(hue: number, steps: number): Array<string> {
-	const palette = [];
-
-	for (let step = 0; step < steps; step++) {
+	return Array.from({ length: steps }, (_, step) => {
 		const lightness = 5 + (95 * step) / (steps - 1);
-		palette.push(`hsl(${hue}, 100%, ${lightness || 100}%)`);
-	}
+		return `hsl(${hue}, 100%, ${Math.min(lightness ?? Infinity, 100)}%)`;
+	});
+}
 
-	return palette;
+export function $<T extends HTMLElement = HTMLElement>(id: string): T {
+	const element = document.getElementById(id);
+	if (!element)
+		throw new Error(`Element with id "${id}" not found`);
+
+	return element as T;
 }
